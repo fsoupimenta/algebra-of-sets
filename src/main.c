@@ -21,6 +21,18 @@ void print_set(int set[set_size])
     }
 }
 
+int check_pertinence(int element, int set[set_size])
+{
+    for (int count = 0; count < set_size; count++)
+    {
+        if (element == set[count])
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 int main()
 {
     setlocale(LC_ALL, "");
@@ -34,6 +46,7 @@ int main()
         printf("What do you want to do? \n"
                "1-)Print set A \n"
                "2-)Print set B \n"
+               "3-)To check pertinence \n"
                "0-)Exit \n");
         scanf("%d", &key);
 
@@ -46,6 +59,19 @@ int main()
             case 2:
                 printf("B = {");
                 print_set(set_B);
+                break;
+
+            case 3:
+                printf("Type the element: \n");
+                scanf("%d", &element);
+                if (check_pertinence(element, set_A) != 0)
+                {
+                    printf("%d belongs to the set", element);
+                }
+                else
+                {
+                    printf("%d not belongs to the set", element);
+                }
                 break;
 
             default:
