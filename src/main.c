@@ -6,6 +6,21 @@
 #include "locale.h"
 #define set_size 5
 
+void print_set(int set[set_size])
+{
+    for (int count = 0; count < set_size; count++)
+    {
+        if (count == set_size - 1)
+        {
+            printf(" %d }", set[count]);
+        }
+        else
+        {
+            printf(" %d,", set[count]);
+        }
+    }
+}
+
 int main()
 {
     setlocale(LC_ALL, "");
@@ -24,11 +39,13 @@ int main()
 
         switch (key) {
             case 1:
-                printf("One");
+                printf("A = {");
+                print_set(set_A);
                 break;
 
             case 2:
-                printf("Two");
+                printf("B = {");
+                print_set(set_B);
                 break;
 
             default:
