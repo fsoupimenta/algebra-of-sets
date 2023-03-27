@@ -33,6 +33,18 @@ int check_pertinence(int element, int set[set_size])
     return 0;
 }
 
+int check_contains(int setA[set_size], int setB[set_size])
+{
+    for (int count = 0; count < set_size; count++)
+    {
+        if (check_pertinence(setA[count], setB) == 0)
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
 int main()
 {
     setlocale(LC_ALL, "");
@@ -47,6 +59,7 @@ int main()
                "1-)Print set A \n"
                "2-)Print set B \n"
                "3-)To check pertinence \n"
+               "4-)To check if set X contains set Y \n"
                "0-)Exit \n");
         scanf("%d", &key);
 
@@ -71,6 +84,17 @@ int main()
                 else
                 {
                     printf("%d not belongs to the set", element);
+                }
+                break;
+
+            case 4:
+                if (check_contains(set_A, set_B) != 0)
+                {
+                    printf("A contains B");
+                }
+                else
+                {
+                    printf("A not contains B");
                 }
                 break;
 
