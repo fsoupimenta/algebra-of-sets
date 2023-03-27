@@ -21,6 +21,21 @@ void print_set(int set[set_size])
     }
 }
 
+void print_union_set(int set[set_size * 2])
+{
+    for (int count = 0; count < set_size * 2; count++)
+    {
+        if (count == set_size * 2 - 1)
+        {
+            printf(" %d }", set[count]);
+        }
+        else
+        {
+            printf(" %d,", set[count]);
+        }
+    }
+}
+
 int check_pertinence(int element, int set[set_size])
 {
     for (int count = 0; count < set_size; count++)
@@ -45,6 +60,25 @@ int check_contains(int setA[set_size], int setB[set_size])
     return 1;
 }
 
+int *make_union(int setA[set_size], int setB[set_size])
+{
+    static int set[set_size * 2];
+    int count_union_set = 0;
+    for (int count = 0; count < set_size; count++)
+    {
+        set[count_union_set] = setA[count];
+        count_union_set++;
+    }
+    for (int count = 0; count < set_size; count++){
+        if (check_pertinence(setB[count], set) == 0)
+        {
+            set[count_union_set] = setB[count];
+            count_union_set++;
+        }
+    }
+    return set;
+}
+
 int main()
 {
     setlocale(LC_ALL, "");
@@ -60,6 +94,7 @@ int main()
                "2-)Print set B \n"
                "3-)To check pertinence \n"
                "4-)To check if set X contains set Y \n"
+               "5-)Print A union B \n"
                "0-)Exit \n");
         scanf("%d", &key);
 
@@ -96,6 +131,12 @@ int main()
                 {
                     printf("A not contains B");
                 }
+                break;
+
+            case 5:
+                printf("A U B {");
+                int *union_set = make_union(set_A, set_B);
+                print_union_set(union_set);
                 break;
 
             default:
