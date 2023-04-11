@@ -79,6 +79,21 @@ int *make_union(int setA[set_size], int setB[set_size])
     return set;
 }
 
+int *make_intersection(int setA[set_size], int setB[set_size])
+{
+    static int set[set_size];
+    int count_intersection_set = 0;
+    for (int count = 0; count < set_size; count++)
+    {
+        if (check_pertinence(setA[count], setB) != 0)
+        {
+            set[count_intersection_set] = setA[count];
+            count_intersection_set++;
+        }
+    }
+    return set;
+}
+
 int main()
 {
     setlocale(LC_ALL, "");
@@ -95,6 +110,7 @@ int main()
                "3-)To check pertinence \n"
                "4-)To check if set X contains set Y \n"
                "5-)Print A union B \n"
+               "6-)Print A intersection B \n"
                "0-)Exit \n");
         scanf("%d", &key);
 
@@ -137,6 +153,12 @@ int main()
                 printf("A U B {");
                 int *union_set = make_union(set_A, set_B);
                 print_union_set(union_set);
+                break;
+
+            case 6:
+                printf("A ∩ B {");
+                int *intersection_set = make_intersection(set_A, set_B);
+                print_set(intersection_set);
                 break;
 
             default:
