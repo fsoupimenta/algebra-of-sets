@@ -5,8 +5,10 @@
 #include "stdio.h"
 #include "locale.h"
 #include <stdlib.h>
+#include "math.h"
 
 typedef struct reg {
+    int index;
     int value;
     struct reg *next;
 } set;
@@ -16,6 +18,11 @@ typedef struct tup {
     int secondValue;
     struct tup *next;
 } tuple;
+
+typedef struct pow {
+    set *set;
+    struct pow *next;
+} powerSet;
 
 int len(set *set_X)
 {
@@ -38,6 +45,18 @@ void insert_set(int value, set *n)
     n->next = new;
 }
 
+void set_index(set *setA)
+{
+    set *helper;
+    int count = 0;
+
+    for (helper = setA->next; helper != NULL; helper = helper->next)
+    {
+        helper->index = count;
+        count++;
+    }
+}
+
 void insert_tuple(int firstValue, int secondValue, tuple *n)
 {
     tuple *new;
@@ -46,6 +65,15 @@ void insert_tuple(int firstValue, int secondValue, tuple *n)
     new->secondValue = secondValue;
     new->next = n->next;
     n->next = new;
+}
+
+void insert_power_set(set *set, powerSet *pow)
+{
+    powerSet *new;
+    new = malloc(sizeof (tuple));
+    new->set = set;
+    new->next = pow->next;
+    pow->next = new;
 }
 
 void print_set (set *set_X) {
@@ -176,6 +204,29 @@ set *undo_cartesian_product(tuple *cartesian_tuple)
     return setA;
 }
 
+powerSet *make_power_set(set *setA)
+{
+    set *helper;
+    powerSet *power = malloc (sizeof (powerSet));
+    unsigned int pow_set_size = pow(2, len(setA));
+
+    for (int counter = 0; counter < pow_set_size; counter++)
+    {
+        set *newSet = malloc (sizeof (set));
+        for (helper = setA->next; helper != NULL; helper = helper->next)
+        {
+            if (counter & (1 << helper->index)) {
+                insert_set(helper->value, newSet);
+                printf("%d", helper->value);
+            }
+        }
+        insert_power_set(newSet, power);
+        free(newSet);
+        printf("\n");
+    }
+    return power;
+}
+
 int main()
 {
     setlocale(LC_ALL, "");
@@ -184,13 +235,15 @@ int main()
     set *set_B = malloc (sizeof (set));
     int key = -1;
 
-    insert_set(0, set_A);
-    insert_set(1, set_A);
+    insert_set(3, set_A);
     insert_set(2, set_A);
+    insert_set(1, set_A);
+    insert_set(0, set_A);
     insert_set(2, set_B);
     insert_set(3, set_B);
     insert_set(4, set_B);
 
+    set_index(set_A);
     tuple *cartesian_product = make_cartesian_product(set_A, set_B);;
 
     while (key != 0)
@@ -290,6 +343,11 @@ int main()
                 printf("Set A {");
                 set *setA = undo_cartesian_product(cartesian_product);
                 print_set(setA);
+                break;
+
+            case 12:
+                printf("PowerSet A");
+                powerSet *pow = make_power_set(set_A);
                 break;
 
             default:
