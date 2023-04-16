@@ -161,6 +161,21 @@ set *make_difference(set *setA, set *setB)
     return difference_set;
 }
 
+set *undo_cartesian_product(tuple *cartesian_tuple)
+{
+    tuple *helper;
+    set *setA = malloc (sizeof (set));
+
+    for (helper = cartesian_tuple->next; helper != NULL; helper = helper->next)
+    {
+        if (check_pertinence(helper->firstValue, setA) == 0)
+        {
+            insert_set(helper->firstValue, setA);
+        }
+    }
+    return setA;
+}
+
 int main()
 {
     setlocale(LC_ALL, "");
@@ -176,6 +191,8 @@ int main()
     insert_set(3, set_B);
     insert_set(4, set_B);
 
+    tuple *cartesian_product = make_cartesian_product(set_A, set_B);;
+
     while (key != 0)
     {
         printf("What do you want to do? \n"
@@ -189,6 +206,7 @@ int main()
                "8-)Print set of pairs A \n"
                "9-)To check if set X contains and equals set Y \n"
                "10-)Print A - B \n"
+               "11-)To undo an cartesian product and print it \n"
                "0-)Exit \n");
         scanf("%d", &key);
 
@@ -242,7 +260,6 @@ int main()
 
             case 7:
                 printf("A x B ");
-                tuple *cartesian_product = make_cartesian_product(set_A, set_B);;
                 print_tuple(cartesian_product);
                 break;
 
@@ -267,6 +284,12 @@ int main()
                 printf("A - B {");
                 set *difference_set = make_difference(set_A, set_B);
                 print_set(difference_set);
+                break;
+
+            case 11:
+                printf("Set A {");
+                set *setA = undo_cartesian_product(cartesian_product);
+                print_set(setA);
                 break;
 
             default:
