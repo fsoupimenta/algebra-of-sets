@@ -4,57 +4,56 @@
 
 #include "stdio.h"
 #include "locale.h"
-#define set_size 5
+#include <stdlib.h>
 
-struct tuple
-{
-    int value_1;
-    int value_2;
-};
+typedef struct reg {
+    int value;
+    struct reg *next;
+} set;
 
-void print_set(int set[set_size])
+typedef struct tup {
+    int firstValue;
+    int secondValue;
+    struct tup *next;
+} tuple;
+
+void insert_set(int value, set *n)
 {
-    for (int count = 0; count < set_size; count++)
-    {
-        if (count == set_size - 1)
-        {
-            printf(" %d }", set[count]);
-        }
-        else
-        {
-            printf(" %d,", set[count]);
-        }
-    }
+    set *new;
+    new = malloc(sizeof (set));
+    new->value = value;
+    new->next = n->next;
+    n->next = new;
 }
 
-void print_union_set(int set[set_size * 2])
+void insert_tuple(int firstValue, int secondValue, tuple *n)
 {
-    for (int count = 0; count < set_size * 2; count++)
-    {
-        if (count == set_size * 2 - 1)
-        {
-            printf(" %d }", set[count]);
-        }
-        else
-        {
-            printf(" %d,", set[count]);
-        }
-    }
+    tuple *new;
+    new = malloc(sizeof (tuple));
+    new->firstValue = firstValue;
+    new->secondValue = secondValue;
+    new->next = n->next;
+    n->next = new;
 }
 
-void print_cartesian_product(struct tuple product[set_size * set_size])
-{
-    for (int i=0; i < set_size * set_size; i++)
-    {
-        printf("(%d, %d)", product[i].value_1, product[i].value_2);
-    }
+void print_set (set *set_X) {
+    set *helper;
+    for (helper = set_X->next; helper != NULL; helper = helper->next)
+        printf (" %d", helper->value);
 }
 
-int check_pertinence(int element, int set[set_size])
+void print_tuple (tuple *set_X) {
+    tuple *helper;
+    for (helper = set_X->next; helper != NULL; helper = helper->next)
+        printf ("( %d, %d )", helper->firstValue, helper->secondValue);
+}
+
+int check_pertinence(int element, set * set_X)
 {
-    for (int count = 0; count < set_size; count++)
+    set *helper;
+    for (helper = set_X->next; helper != NULL; helper = helper->next)
     {
-        if (element == set[count])
+        if (element == helper->value)
         {
             return 1;
         }
@@ -62,11 +61,12 @@ int check_pertinence(int element, int set[set_size])
     return 0;
 }
 
-int check_contains(int setA[set_size], int setB[set_size])
+int check_contains(set *setA, set *setB)
 {
-    for (int count = 0; count < set_size; count++)
+    set *helper;
+    for (helper = setA->next; helper != NULL; helper = helper->next)
     {
-        if (check_pertinence(setA[count], setB) == 0)
+        if (check_pertinence(setA->value, setB) == 0)
         {
             return 0;
         }
@@ -74,65 +74,68 @@ int check_contains(int setA[set_size], int setB[set_size])
     return 1;
 }
 
-int *make_union(int setA[set_size], int setB[set_size])
+set *make_union(set *setA, set *setB)
 {
-    static int set[set_size * 2];
-    int count_union_set = 0;
-    for (int count = 0; count < set_size; count++)
+    set *helper;
+    set *unionSet = malloc (sizeof (set));
+    for (helper = setA->next; helper != NULL; helper = helper->next)
     {
-        set[count_union_set] = setA[count];
-        count_union_set++;
+        insert_set(helper->value, unionSet);
     }
-    for (int count = 0; count < set_size; count++){
-        if (check_pertinence(setB[count], set) == 0)
+    for (helper = setB->next; helper != NULL; helper = helper->next)
+    {
+        if (check_pertinence(helper->value, unionSet) == 0)
         {
-            set[count_union_set] = setB[count];
-            count_union_set++;
+            insert_set(helper->value, unionSet);
         }
     }
-    return set;
+    return unionSet;
 }
 
-int *make_intersection(int setA[set_size], int setB[set_size])
+set *make_intersection(set *setA, set *setB)
 {
-    static int set[set_size];
-    int count_intersection_set = 0;
-    for (int count = 0; count < set_size; count++)
+    set *helper;
+    set *intersection_set = malloc (sizeof (set));
+    for (helper = setA->next; helper != NULL; helper = helper->next)
     {
-        if (check_pertinence(setA[count], setB) != 0)
+        if (check_pertinence(helper->value, setB) != 0)
         {
-            set[count_intersection_set] = setA[count];
-            count_intersection_set++;
+            insert_set(helper->value, intersection_set);
         }
     }
-    return set;
+    return intersection_set;
 }
 
-struct tuple *make_cartesian_product(int setA[set_size], int setB[set_size])
+tuple *make_cartesian_product(set *setA, set *setB)
 {
+    set *helperA;
+    set *helperB;
+    tuple *cartesian_product = malloc (sizeof (tuple));
 
-    static struct tuple tuple[set_size * set_size];
-    int tuple_count = 0;
-
-    for (int i=0; i < set_size; i++)
+    for (helperA = setA->next; helperA != NULL; helperA = helperA->next)
     {
-        for (int j=0; j < set_size; j++)
+        for (helperB = setB->next; helperB != NULL; helperB = helperB->next)
         {
-            tuple[tuple_count].value_1 = setA[i];
-            tuple[tuple_count].value_2 = setB[j];
-            tuple_count++;
+            insert_tuple(helperA->value, helperB->value, cartesian_product);
         }
     }
-    return tuple;
+    return cartesian_product;
 }
 
 int main()
 {
     setlocale(LC_ALL, "");
 
-    int set_A[set_size] = {0, 1, 2, 3, 4},
-        set_B[set_size] = {4, 5, 6, 7, 8},
-        element, key = -1;
+    set *set_A = malloc (sizeof (set));
+    set *set_B = malloc (sizeof (set));
+    int key = -1;
+
+    insert_set(0, set_A);
+    insert_set(1, set_A);
+    insert_set(2, set_A);
+    insert_set(2, set_B);
+    insert_set(3, set_B);
+    insert_set(4, set_B);
 
     while (key != 0)
     {
@@ -144,6 +147,7 @@ int main()
                "5-)Print A union B \n"
                "6-)Print A intersection B \n"
                "7-)Print A cartesian product B \n"
+               "8-)Print set of pairs A \n"
                "0-)Exit \n");
         scanf("%d", &key);
 
@@ -160,6 +164,7 @@ int main()
 
             case 3:
                 printf("Type the element: \n");
+                int element;
                 scanf("%d", &element);
                 if (check_pertinence(element, set_A) != 0)
                 {
@@ -167,7 +172,7 @@ int main()
                 }
                 else
                 {
-                    printf("%d not belongs to the set", element);
+                    printf("%d does not belongs to the set", element);
                 }
                 break;
 
@@ -184,22 +189,24 @@ int main()
 
             case 5:
                 printf("A U B {");
-                int *union_set = make_union(set_A, set_B);
-                print_union_set(union_set);
+                set *union_set = make_union(set_A, set_B);
+                print_set(union_set);
                 break;
 
             case 6:
                 printf("A ∩ B {");
-                int *intersection_set = make_intersection(set_A, set_B);
+                set *intersection_set = make_intersection(set_A, set_B);
                 print_set(intersection_set);
                 break;
 
             case 7:
                 printf("A x B ");
-                struct tuple *cartesian_product;
-                cartesian_product = make_cartesian_product(set_A, set_B);
-                printf("%d", cartesian_product[0].value_1);
-                print_cartesian_product(cartesian_product);
+                tuple *cartesian_product = make_cartesian_product(set_A, set_B);;
+                print_tuple(cartesian_product);
+                break;
+
+            case 8:
+                printf("Pairs of A");
                 break;
 
             default:
