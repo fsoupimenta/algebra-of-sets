@@ -86,6 +86,19 @@ int check_contains(set *setA, set *setB)
     return 1;
 }
 
+int check_contains_equals(set *setA, set *setB)
+{
+    if (check_contains(setA, setB) == 1 && len(setA) == len(setB))
+    {
+        return 1;
+    }
+    else if (check_contains(setA, setB))
+    {
+        return 2;
+    }
+    return 0;
+}
+
 set *make_union(set *setA, set *setB)
 {
     set *helper;
@@ -134,6 +147,20 @@ tuple *make_cartesian_product(set *setA, set *setB)
     return cartesian_product;
 }
 
+set *make_difference(set *setA, set *setB)
+{
+    set *helper;
+    set *difference_set = malloc (sizeof (set));
+    for (helper = setA->next; helper != NULL; helper = helper->next)
+    {
+        if (check_pertinence(helper->value, setB) == 0)
+        {
+            insert_set(helper->value, difference_set);
+        }
+    }
+    return difference_set;
+}
+
 int main()
 {
     setlocale(LC_ALL, "");
@@ -160,6 +187,8 @@ int main()
                "6-)Print A intersection B \n"
                "7-)Print A cartesian product B \n"
                "8-)Print set of pairs A \n"
+               "9-)To check if set X contains and equals set Y \n"
+               "10-)Print A - B \n"
                "0-)Exit \n");
         scanf("%d", &key);
 
@@ -195,7 +224,7 @@ int main()
                 }
                 else
                 {
-                    printf("A not contains B");
+                    printf("A does not contains B");
                 }
                 break;
 
@@ -219,6 +248,25 @@ int main()
 
             case 8:
                 printf("Pairs of A");
+                break;
+
+            case 9:
+                if (check_contains_equals(set_A, set_B) == 1)
+                {
+                    printf("A contains and is equals to B");
+                } else if (check_contains_equals(set_A, set_B) == 2)
+                {
+                    printf("A contains and is not equals to B");
+                } else
+                {
+                    printf("A does not contains B");
+                }
+                break;
+
+            case 10:
+                printf("A - B {");
+                set *difference_set = make_difference(set_A, set_B);
+                print_set(difference_set);
                 break;
 
             default:
