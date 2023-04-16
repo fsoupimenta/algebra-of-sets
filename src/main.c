@@ -17,6 +17,18 @@ typedef struct tup {
     struct tup *next;
 } tuple;
 
+int len(set *set_X)
+{
+    set *helper;
+    int size = 0;
+
+    for (helper = set_X->next; helper != NULL; helper = helper->next)
+    {
+        size++;
+    }
+    return size;
+}
+
 void insert_set(int value, set *n)
 {
     set *new;
