@@ -2,10 +2,10 @@
 // Created by Fernando Pimenta on 25/03/2023.
 //
 
-#include "stdio.h"
-#include "locale.h"
+#include <stdio.h>
+#include <locale.h>
 #include <stdlib.h>
-#include "math.h"
+#include <math.h>
 
 typedef struct reg {
     int value;
@@ -238,6 +238,17 @@ powerSet *make_power_set(set *setA)
     return pSet;
 }
 
+set *undo_power_set(powerSet *pSet)
+{
+    powerSet *helper;
+    set *undo_set = malloc(sizeof (set));
+    for (helper = pSet->next; helper != NULL; helper = helper->next)
+    {
+        undo_set = make_union(undo_set, helper->setA);
+    }
+    return undo_set;
+}
+
 int main()
 {
     setlocale(LC_ALL, "");
@@ -269,6 +280,8 @@ int main()
                "9-)To check if set X contains and equals set Y \n"
                "10-)Print A - B \n"
                "11-)To undo an cartesian product and print it \n"
+               "12-)To print powerSet A \n"
+               "13-)To undo powerSet and print it \n"
                "0-)Exit \n");
         scanf("%d", &key);
 
@@ -358,6 +371,13 @@ int main()
                 printf("PowerSet A");
                 powerSet *pow = make_power_set(set_A);
                 print_power_set(pow);
+                break;
+
+            case 13:
+                printf("Undo PowerSet A:");
+                powerSet *pSet = make_power_set(set_A);
+                set *undo_set = undo_power_set(pSet);
+                print_set(undo_set);
                 break;
 
             default:
