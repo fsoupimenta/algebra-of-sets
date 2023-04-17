@@ -44,6 +44,14 @@ void insert_set(int value, set *n)
     n->next = new;
 }
 
+void insert_set_in_list(int *values, int size, set *setX)
+{
+    for (int i = 0; i < size; i++)
+    {
+        insert_set(values[i], setX);
+    }
+}
+
 void insert_tuple(int firstValue, int secondValue, tuple *n)
 {
     tuple *new;
@@ -256,13 +264,11 @@ int main()
     set *set_A = malloc (sizeof (set));
     set *set_B = malloc (sizeof (set));
     int key = -1;
+    int set1[] = {3, 2, 1, 0};
+    int set2[] = {6, 5, 4, 3};
 
-    insert_set(2, set_A);
-    insert_set(1, set_A);
-    insert_set(0, set_A);
-    insert_set(2, set_B);
-    insert_set(3, set_B);
-    insert_set(4, set_B);
+    insert_set_in_list(set1, 4, set_A);
+    insert_set_in_list(set2, 4, set_B);
 
     tuple *cartesian_product = make_cartesian_product(set_A, set_B);
 
@@ -271,28 +277,27 @@ int main()
         printf("What do you want to do? \n"
                "1-)Print set A \n"
                "2-)Print set B \n"
-               "3-)To check pertinence \n"
-               "4-)To check if set X contains set Y \n"
+               "3-)To check if an element belongs to A \n"
+               "4-)To check if set A contains set B \n"
                "5-)Print A union B \n"
                "6-)Print A intersection B \n"
                "7-)Print A cartesian product B \n"
-               "8-)Print set of pairs A \n"
-               "9-)To check if set X contains and equals set Y \n"
-               "10-)Print A - B \n"
-               "11-)To undo an cartesian product and print it \n"
-               "12-)To print powerSet A \n"
-               "13-)To undo powerSet and print it \n"
+               "8-)To check if set A contains and equals set Y \n"
+               "9-)Print A - B \n"
+               "10-)To undo an cartesian product and print it \n"
+               "11-)To print powerSet A \n"
+               "12-)To undo powerSet and print it \n"
                "0-)Exit \n");
         scanf("%d", &key);
 
         switch (key) {
             case 1:
-                printf("A = {");
+                printf("A = ");
                 print_set(set_A);
                 break;
 
             case 2:
-                printf("B = {");
+                printf("B = ");
                 print_set(set_B);
                 break;
 
@@ -322,27 +327,23 @@ int main()
                 break;
 
             case 5:
-                printf("A U B {");
+                printf("A U B = ");
                 set *union_set = make_union(set_A, set_B);
                 print_set(union_set);
                 break;
 
             case 6:
-                printf("A ∩ B {");
+                printf("A ∩ B = ");
                 set *intersection_set = make_intersection(set_A, set_B);
                 print_set(intersection_set);
                 break;
 
             case 7:
-                printf("A x B ");
+                printf("A x B = ");
                 print_tuple(cartesian_product);
                 break;
 
             case 8:
-                printf("Pairs of A");
-                break;
-
-            case 9:
                 if (check_contains_equals(set_A, set_B) == 1)
                 {
                     printf("A contains and is equals to B");
@@ -355,26 +356,26 @@ int main()
                 }
                 break;
 
-            case 10:
-                printf("A - B {");
+            case 9:
+                printf("A - B = ");
                 set *difference_set = make_difference(set_A, set_B);
                 print_set(difference_set);
                 break;
 
-            case 11:
-                printf("Set A {");
+            case 10:
+                printf("Set A = ");
                 set *setA = undo_cartesian_product(cartesian_product);
                 print_set(setA);
                 break;
 
-            case 12:
-                printf("PowerSet A");
+            case 11:
+                printf("PowerSet A = ");
                 powerSet *pow = make_power_set(set_A);
                 print_power_set(pow);
                 break;
 
-            case 13:
-                printf("Undo PowerSet A:");
+            case 12:
+                printf("Undo PowerSet A = ");
                 powerSet *pSet = make_power_set(set_A);
                 set *undo_set = undo_power_set(pSet);
                 print_set(undo_set);
