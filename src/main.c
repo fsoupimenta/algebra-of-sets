@@ -276,6 +276,22 @@ tuple *relations_square_root(set *setA, set *setB)
     return square_root_tuple;
 }
 
+int is_functional(tuple *relation_set)
+{
+    tuple *helper;
+    int prev_value;
+
+    for (helper = cartesian_tuple->next; helper != NULL; helper = helper->next)
+    {
+        if (helper->firstValue == prev_value)
+        {
+            return 0;
+        }
+        prev_value = helper->firstValue
+    }
+    return 1;
+}
+
 set *make_difference(set *setA, set *setB)
 {
     set *helper;
