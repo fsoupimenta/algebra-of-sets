@@ -219,6 +219,25 @@ tuple *less_than(set *setA, set *setB)
     return less_than;
 }
 
+tuple *relations_equals(set *setA, set *setB)
+{
+    set *helperA;
+    set *helperB;
+    tuple *equals_tuple = malloc (sizeof (tuple));
+
+    for (helperA = setA->next; helperA != NULL; helperA = helperA->next)
+    {
+        for (helperB = setB->next; helperB != NULL; helperB = helperB->next)
+        {
+            if (helperA->value == helperB->value)
+            {
+                insert_tuple(helperA->value, helperB->value, equals_tuple);
+            }
+        }
+    }
+    return equals_tuple;
+}
+
 set *make_difference(set *setA, set *setB)
 {
     set *helper;
