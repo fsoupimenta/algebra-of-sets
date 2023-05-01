@@ -248,13 +248,32 @@ tuple *relations_square(set *setA, set *setB)
     {
         for (helperB = setB->next; helperB != NULL; helperB = helperB->next)
         {
-            if (helperA->value == helperB->value * helperB->value)
+            if (helperA->value * helperA->value == helperB->value)
             {
                 insert_tuple(helperA->value, helperB->value, square_tuple);
             }
         }
     }
     return square_tuple;
+}
+
+tuple *relations_square_root(set *setA, set *setB)
+{
+    set *helperA;
+    set *helperB;
+    tuple *square_root_tuple = malloc (sizeof (tuple));
+
+    for (helperA = setA->next; helperA != NULL; helperA = helperA->next)
+    {
+        for (helperB = setB->next; helperB != NULL; helperB = helperB->next)
+        {
+            if (helperA->value == helperB->value * helperB->value)
+            {
+                insert_tuple(helperA->value, helperB->value, square_root_tuple);
+            }
+        }
+    }
+    return square_root_tuple;
 }
 
 set *make_difference(set *setA, set *setB)
