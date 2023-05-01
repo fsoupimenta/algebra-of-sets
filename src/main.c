@@ -200,6 +200,25 @@ tuple *greater_than(set *setA, set *setB)
     return greater_than;
 }
 
+tuple *less_than(set *setA, set *setB)
+{
+    set *helperA;
+    set *helperB;
+    tuple *less_than = malloc (sizeof (tuple));
+
+    for (helperA = setA->next; helperA != NULL; helperA = helperA->next)
+    {
+        for (helperB = setB->next; helperB != NULL; helperB = helperB->next)
+        {
+            if (helperA->value < helperB->value)
+            {
+                insert_tuple(helperA->value, helperB->value, less_than);
+            }
+        }
+    }
+    return less_than;
+}
+
 set *make_difference(set *setA, set *setB)
 {
     set *helper;
