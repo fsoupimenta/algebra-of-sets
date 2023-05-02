@@ -583,6 +583,7 @@ int main()
     set *set_A = malloc (sizeof (set));
     set *set_B = malloc (sizeof (set));
     int key = -1;
+    int main_key = -1;
     int set1[] = {3, 2, 1, 0};
     int set2[] = {6, 5, 4, 3};
 
@@ -596,20 +597,12 @@ int main()
         printf("What do you want to do? \n"
                "1-)Print set A \n"
                "2-)Print set B \n"
-               "3-)To check if an element belongs to A \n"
-               "4-)To check if set A contains set B \n"
-               "5-)Print A union B \n"
-               "6-)Print A intersection B \n"
-               "7-)Print A cartesian product B \n"
-               "8-)To check if set A contains and equals set Y \n"
-               "9-)Print A - B \n"
-               "10-)To undo an cartesian product and print it \n"
-               "11-)To print powerSet A \n"
-               "12-)To undo powerSet and print it \n"
+               "3-)Go to relations \n"
+               "4-)Go to operations \n"
                "0-)Exit \n");
-        scanf("%d", &key);
+        scanf("%d", &main_key);
 
-        switch (key) {
+        switch (main_key) {
             case 1:
                 printf("A = ");
                 print_set(set_A);
@@ -621,95 +614,182 @@ int main()
                 break;
 
             case 3:
-                printf("Type the element: \n");
-                int element;
-                scanf("%d", &element);
-                if (check_pertinence(element, set_A) != 0)
+                while (key != 13)
                 {
-                    printf("%d belongs to the set", element);
+                    printf("\n ----------------------\n");
+                    printf("What do you want to do? \n"
+                           "1-)A greater than B \n"
+                           "2-)A smaller than B \n"
+                           "3-)A equals to B \n"
+                           "4-)B equals the square of A \n"
+                           "5-)B equals the square root of A \n"
+                           "13-)To return to main menu\n");
+                    scanf("%d", &key);
+
+                    switch (key) {
+                        case 1:
+                            printf("A > B = \n");
+                            tuple *relation_set = greater_than(set_A, set_B);
+                            print_tuple(relation_set);
+                            set_classifications(relation_set, len(set_A), len(set_B));
+                            break;
+
+                        case 2:
+                            printf("A < B = \n");
+                            tuple *relation_setB = less_than(set_A, set_B);
+                            print_tuple(relation_setB);
+                            set_classifications(relation_setB, len(set_A), len(set_B));
+                            break;
+
+                        case 3:
+                            printf("A = B = \n");
+                            tuple *relation_setC = relations_equals(set_A, set_B);
+                            print_tuple(relation_setC);
+                            set_classifications(relation_setC, len(set_A), len(set_B));
+                            break;
+
+                        case 4:
+                            printf("A^2 = B = \n");
+                            tuple *relation_setD = relations_square(set_A, set_B);
+                            print_tuple(relation_setD);
+                            set_classifications(relation_setD, len(set_A), len(set_B));
+                            break;
+
+                        case 5:
+                            printf("A^1/2 = B = \n");
+                            tuple *relation_setE = relations_square_root(set_A, set_B);
+                            print_tuple(relation_setE);
+                            set_classifications(relation_setE, len(set_A), len(set_B));
+                            break;
+
+                        default:
+                            break;
+                    }
+                    printf("\n ----------------------\n");
                 }
-                else
-                {
-                    printf("%d does not belongs to the set", element);
-                }
-                break;
 
             case 4:
-                if (check_contains(set_A, set_B) != 0)
+                while (key != 13)
                 {
-                    printf("A contains B");
+                    printf("\n ----------------------\n");
+                    printf("What do you want to do? \n"
+                           "1-)Print set A \n"
+                           "2-)Print set B \n"
+                           "3-)To check if an element belongs to A \n"
+                           "4-)To check if set A contains set B \n"
+                           "5-)Print A union B \n"
+                           "6-)Print A intersection B \n"
+                           "7-)Print A cartesian product B \n"
+                           "8-)To check if set A contains and equals set Y \n"
+                           "9-)Print A - B \n"
+                           "10-)To undo an cartesian product and print it \n"
+                           "11-)To print powerSet A \n"
+                           "12-)To undo powerSet and print it \n"
+                           "13-)To return to main menu\n");
+                    scanf("%d", &key);
+
+                    switch (key) {
+                        case 1:
+                            printf("A = ");
+                            print_set(set_A);
+                            break;
+
+                        case 2:
+                            printf("B = ");
+                            print_set(set_B);
+                            break;
+
+                        case 3:
+                            printf("Type the element: \n");
+                            int element;
+                            scanf("%d", &element);
+                            if (check_pertinence(element, set_A) != 0)
+                            {
+                                printf("%d belongs to the set", element);
+                            }
+                            else
+                            {
+                                printf("%d does not belongs to the set", element);
+                            }
+                            break;
+
+                        case 4:
+                            if (check_contains(set_A, set_B) != 0)
+                            {
+                                printf("A contains B");
+                            }
+                            else
+                            {
+                                printf("A does not contains B");
+                            }
+                            break;
+
+                        case 5:
+                            printf("A U B = ");
+                            set *union_set = make_union(set_A, set_B);
+                            print_set(union_set);
+                            break;
+
+                        case 6:
+                            printf("A ∩ B = ");
+                            set *intersection_set = make_intersection(set_A, set_B);
+                            print_set(intersection_set);
+                            break;
+
+                        case 7:
+                            printf("A x B = ");
+                            print_tuple(cartesian_product);
+                            break;
+
+                        case 8:
+                            if (check_contains_equals(set_A, set_B) == 1)
+                            {
+                                printf("A contains and is equals to B");
+                            } else if (check_contains_equals(set_A, set_B) == 2)
+                            {
+                                printf("A contains and is not equals to B");
+                            } else
+                            {
+                                printf("A does not contains B");
+                            }
+                            break;
+
+                        case 9:
+                            printf("A - B = ");
+                            set *difference_set = make_difference(set_A, set_B);
+                            print_set(difference_set);
+                            break;
+
+                        case 10:
+                            printf("Set A = ");
+                            set *setA = undo_cartesian_product(cartesian_product);
+                            print_set(setA);
+                            break;
+
+                        case 11:
+                            printf("PowerSet A = ");
+                            powerSet *pow = make_power_set(set_A);
+                            print_power_set(pow);
+                            break;
+
+                        case 12:
+                            printf("Undo PowerSet A = ");
+                            powerSet *pSet = make_power_set(set_A);
+                            set *undo_set = undo_power_set(pSet);
+                            print_set(undo_set);
+                            break;
+
+                        case 13:
+                            greater_than(set_A, set_B);
+                            break;
+
+                        default:
+                            break;
+                    }
+                    printf("\n ----------------------\n");
                 }
-                else
-                {
-                    printf("A does not contains B");
-                }
-                break;
-
-            case 5:
-                printf("A U B = ");
-                set *union_set = make_union(set_A, set_B);
-                print_set(union_set);
-                break;
-
-            case 6:
-                printf("A ∩ B = ");
-                set *intersection_set = make_intersection(set_A, set_B);
-                print_set(intersection_set);
-                break;
-
-            case 7:
-                printf("A x B = ");
-                print_tuple(cartesian_product);
-                break;
-
-            case 8:
-                if (check_contains_equals(set_A, set_B) == 1)
-                {
-                    printf("A contains and is equals to B");
-                } else if (check_contains_equals(set_A, set_B) == 2)
-                {
-                    printf("A contains and is not equals to B");
-                } else
-                {
-                    printf("A does not contains B");
-                }
-                break;
-
-            case 9:
-                printf("A - B = ");
-                set *difference_set = make_difference(set_A, set_B);
-                print_set(difference_set);
-                break;
-
-            case 10:
-                printf("Set A = ");
-                set *setA = undo_cartesian_product(cartesian_product);
-                print_set(setA);
-                break;
-
-            case 11:
-                printf("PowerSet A = ");
-                powerSet *pow = make_power_set(set_A);
-                print_power_set(pow);
-                break;
-
-            case 12:
-                printf("Undo PowerSet A = ");
-                powerSet *pSet = make_power_set(set_A);
-                set *undo_set = undo_power_set(pSet);
-                print_set(undo_set);
-                break;
-
-            case 13:
-                greater_than(set_A, set_B);
-                break;
-
-            default:
-                break;
         }
-        printf("\n ----------------------\n");
     }
-
     return 0;
 }
 
