@@ -200,37 +200,35 @@ tuple *make_cartesian_product(set *setA, set *setB)
     return cartesian_product;
 }
 
-int **allocate_board(int Rows, int Cols)
+int **create_matrix(int rows, int columns)
 {
     // allocate Rows rows, each row is a pointer to int
-    int **board = (int **)malloc(Rows * sizeof(int *));
+    int **matrix = (int **)malloc(rows * sizeof(int *));
     int row;
 
     // for each row allocate Cols ints
-    for (row = 0; row < Rows; row++) {
-        board[row] = (int *)malloc(Cols * sizeof(int));
+    for (row = 0; row < rows; row++) {
+        matrix[row] = (int *)malloc(columns * sizeof(int));
     }
 
-    return board;
+    return matrix;
 }
 
-void free_board(int **board, int Rows)
+void free_matrix(int **matrix, int rows)
 {
     int row;
 
-    // first free each row
-    for (row = 0; row < Rows; row++) {
-         free(board[row]);
+    for (row = 0; row < rows; row++) {
+         free(matrix[row]);
     }
 
-    // Eventually free the memory of the pointers to the rows
-    free(board);
+    free(matrix);
  }
 
 int is_functional(tuple *relation_set, int size_i, int size_j)
 {
     tuple *helper;
-    int** matrix = allocate_board(size_i, size_j);
+    int** matrix = create_matrix(size_i, size_j);
     int aux_functional = 0;
 
     for (helper = relation_set->next; helper != NULL; helper = helper->next)
@@ -249,12 +247,12 @@ int is_functional(tuple *relation_set, int size_i, int size_j)
         }
         if (aux_functional > 1)
         {
-            free_board(matrix, size_i);
+            free_matrix(matrix, size_i);
             return 0;
         }
         aux_functional = 0;
     }
-    free_board(matrix, size_i);
+    free_matrix(matrix, size_i);
     return 1;
 }
 
@@ -263,7 +261,6 @@ void *greater_than(set *setA, set *setB)
     set *helperA;
     set *helperB;
     tuple *greater_than = malloc (sizeof (tuple));
-    int** matrix = allocate_board(len(setA), len(setB));
 
     for (helperA = setA->next; helperA != NULL; helperA = helperA->next)
     {
@@ -272,7 +269,6 @@ void *greater_than(set *setA, set *setB)
             if (helperA->value.value > helperB->value.value)
             {
                 insert_tuple(helperA->value, helperB->value, greater_than);
-                matrix[helperA->value.index][helperB->value.index] = 1;
             }
         }
     }
