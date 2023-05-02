@@ -316,6 +316,33 @@ int is_total(tuple *relation_set, int size_i, int size_j)
     return 1;
 }
 
+int is_surjective(tuple *relation_set, int size_i, int size_j)
+{
+    int** matrix = create_matrix(size_i, size_j);
+    int aux_functional = 0;
+
+    fill_matrix(relation_set, matrix);
+
+    for (int i = 0; i < size_i; i++)
+    {
+        for (int j = 0; j < size_j; j++)
+        {
+            if (matrix[j][i] != 0)
+            {
+                aux_functional++;
+            }
+        }
+        if (aux_functional == 0)
+        {
+            free_matrix(matrix, size_i);
+            return 0;
+        }
+        aux_functional = 0;
+    }
+    free_matrix(matrix, size_i);
+    return 1;
+}
+
 void *greater_than(set *setA, set *setB)
 {
     set *helperA;
