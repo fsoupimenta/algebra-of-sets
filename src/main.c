@@ -373,7 +373,39 @@ int is_isomorphism(tuple *relation_set, int size_i, int size_j)
     return 0;
 }
 
-void *greater_than(set *setA, set *setB)
+void set_classifications(tuple *relation_set, int size_i, int size_j)
+{
+    if (is_functional(relation_set, size_i, size_j) == 1)
+    {
+        printf("Is functional \n");
+    }
+    if (is_injective(relation_set, size_i, size_j) == 1)
+    {
+        printf("Is injective \n");
+    }
+    if (is_total(relation_set, size_i, size_j) == 1)
+    {
+        printf("Is total \n");
+    }
+    if (is_surjective(relation_set, size_i, size_j) == 1)
+    {
+        printf("Is surjective \n");
+    }
+    if (is_monomorphism(relation_set, size_i, size_j) == 1)
+    {
+        printf("Is monomorphism \n");
+    }
+    if (is_epimorphisms(relation_set, size_i, size_j) == 1)
+    {
+        printf("Is epimorphisms \n");
+    }
+    if (is_isomorphism(relation_set, size_i, size_j) == 1)
+    {
+        printf("Is isomorphism \n");
+    }
+}
+
+tuple *greater_than(set *setA, set *setB)
 {
     set *helperA;
     set *helperB;
@@ -389,8 +421,7 @@ void *greater_than(set *setA, set *setB)
             }
         }
     }
-    printf("%d", is_functional(greater_than, len(setA), len(setB)));
-    print_tuple(greater_than);
+    return greater_than;
 }
 
 tuple *less_than(set *setA, set *setB)
