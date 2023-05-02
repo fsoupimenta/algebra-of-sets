@@ -225,16 +225,22 @@ void free_matrix(int **matrix, int rows)
     free(matrix);
  }
 
-int is_functional(tuple *relation_set, int size_i, int size_j)
+void fill_matrix(tuple *relation_set, int **matrix)
 {
     tuple *helper;
-    int** matrix = create_matrix(size_i, size_j);
-    int aux_functional = 0;
 
     for (helper = relation_set->next; helper != NULL; helper = helper->next)
     {
         matrix[helper->firstValue.index][helper->secondValue.index] = 1;
     }
+}
+
+int is_functional(tuple *relation_set, int size_i, int size_j)
+{
+    int** matrix = create_matrix(size_i, size_j);
+    int aux_functional = 0;
+
+    fill_matrix(relation_set, matrix);
 
     for (int i = 0; i < size_i; i++)
     {
