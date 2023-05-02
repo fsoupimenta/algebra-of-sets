@@ -343,6 +343,26 @@ int is_surjective(tuple *relation_set, int size_i, int size_j)
     return 1;
 }
 
+int is_monomorphism(tuple *relation_set, int size_i, int size_j)
+{
+    if (is_total(relation_set, size_i, size_j) == 1 &&
+        is_injective(relation_set, size_i, size_j))
+    {
+        return 1;
+    }
+    return 0;
+}
+
+int is_epimorphisms(tuple *relation_set, int size_i, int size_j)
+{
+    if (is_total(relation_set, size_i, size_j) == 1 &&
+        is_injective(relation_set, size_i, size_j))
+    {
+        return 1;
+    }
+    return 0;
+}
+
 void *greater_than(set *setA, set *setB)
 {
     set *helperA;
