@@ -355,8 +355,8 @@ int is_monomorphism(tuple *relation_set, int size_i, int size_j)
 
 int is_epimorphisms(tuple *relation_set, int size_i, int size_j)
 {
-    if (is_total(relation_set, size_i, size_j) == 1 &&
-        is_injective(relation_set, size_i, size_j))
+    if (is_functional(relation_set, size_i, size_j) == 1 &&
+        is_surjective(relation_set, size_i, size_j))
     {
         return 1;
     }
