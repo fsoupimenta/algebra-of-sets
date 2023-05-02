@@ -363,6 +363,16 @@ int is_epimorphisms(tuple *relation_set, int size_i, int size_j)
     return 0;
 }
 
+int is_isomorphism(tuple *relation_set, int size_i, int size_j)
+{
+    if (is_monomorphism(relation_set, size_i, size_j) == 1 &&
+        is_epimorphisms(relation_set, size_i, size_j))
+    {
+        return 1;
+    }
+    return 0;
+}
+
 void *greater_than(set *setA, set *setB)
 {
     set *helperA;
