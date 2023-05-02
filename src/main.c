@@ -7,14 +7,20 @@
 #include <stdlib.h>
 #include <math.h>
 
-typedef struct reg {
+struct element
+{
     int value;
+    int index;
+};
+
+typedef struct reg {
+    struct element value;
     struct reg *next;
 } set;
 
 typedef struct tup {
-    int firstValue;
-    int secondValue;
+    struct element firstValue;
+    struct element secondValue;
     struct tup *next;
 } tuple;
 
@@ -35,13 +41,26 @@ int len(set *set_X)
     return size;
 }
 
+void set_index(set *set_X)
+{
+    set *helper;
+    int index = 0;
+
+    for (helper = set_X->next; helper != NULL; helper = helper->next)
+    {
+        helper->value.index = index;
+        index++;
+    }
+}
+
 void insert_set(int value, set *n)
 {
     set *new;
     new = malloc(sizeof (set));
-    new->value = value;
+    new->value.value = value;
     new->next = n->next;
     n->next = new;
+    set_index(n);
 }
 
 void insert_set_in_list(int *values, int size, set *setX)
@@ -52,7 +71,7 @@ void insert_set_in_list(int *values, int size, set *setX)
     }
 }
 
-void insert_tuple(int firstValue, int secondValue, tuple *n)
+void insert_tuple(struct element firstValue, struct element secondValue, tuple *n)
 {
     tuple *new;
     new = malloc(sizeof (tuple));
@@ -75,14 +94,14 @@ void print_set (set *set_X) {
     set *helper;
     printf("(");
     for (helper = set_X->next; helper != NULL; helper = helper->next)
-        printf (" %d", helper->value);
+        printf (" %d", helper->value.value);
     printf(" )");
 }
 
 void print_tuple (tuple *set_X) {
     tuple *helper;
     for (helper = set_X->next; helper != NULL; helper = helper->next)
-        printf ("( %d, %d )", helper->firstValue, helper->secondValue);
+        printf ("( %d, %d )", helper->firstValue.value, helper->secondValue.value);
 }
 
 void print_power_set (powerSet *pow)
@@ -99,7 +118,7 @@ int check_pertinence(int element, set * set_X)
     set *helper;
     for (helper = set_X->next; helper != NULL; helper = helper->next)
     {
-        if (element == helper->value)
+        if (element == helper->value.value)
         {
             return 1;
         }
@@ -112,7 +131,7 @@ int check_contains(set *setA, set *setB)
     set *helper;
     for (helper = setA->next; helper != NULL; helper = helper->next)
     {
-        if (check_pertinence(setA->value, setB) == 0)
+        if (check_pertinence(setA->value.value, setB) == 0)
         {
             return 0;
         }
@@ -139,13 +158,13 @@ set *make_union(set *setA, set *setB)
     set *unionSet = malloc (sizeof (set));
     for (helper = setA->next; helper != NULL; helper = helper->next)
     {
-        insert_set(helper->value, unionSet);
+        insert_set(helper->value.value, unionSet);
     }
     for (helper = setB->next; helper != NULL; helper = helper->next)
     {
-        if (check_pertinence(helper->value, unionSet) == 0)
+        if (check_pertinence(helper->value.value, unionSet) == 0)
         {
-            insert_set(helper->value, unionSet);
+            insert_set(helper->value.value, unionSet);
         }
     }
     return unionSet;
@@ -157,9 +176,9 @@ set *make_intersection(set *setA, set *setB)
     set *intersection_set = malloc (sizeof (set));
     for (helper = setA->next; helper != NULL; helper = helper->next)
     {
-        if (check_pertinence(helper->value, setB) != 0)
+        if (check_pertinence(helper->value.value, setB) != 0)
         {
-            insert_set(helper->value, intersection_set);
+            insert_set(helper->value.value, intersection_set);
         }
     }
     return intersection_set;
@@ -181,23 +200,84 @@ tuple *make_cartesian_product(set *setA, set *setB)
     return cartesian_product;
 }
 
-tuple *greater_than(set *setA, set *setB)
+int **allocate_board(int Rows, int Cols)
+{
+    // allocate Rows rows, each row is a pointer to int
+    int **board = (int **)malloc(Rows * sizeof(int *));
+    int row;
+
+    // for each row allocate Cols ints
+    for (row = 0; row < Rows; row++) {
+        board[row] = (int *)malloc(Cols * sizeof(int));
+    }
+
+    return board;
+}
+
+void free_board(int **board, int Rows)
+{
+    int row;
+
+    // first free each row
+    for (row = 0; row < Rows; row++) {
+         free(board[row]);
+    }
+
+    // Eventually free the memory of the pointers to the rows
+    free(board);
+ }
+
+int is_functional(tuple *relation_set, int size_i, int size_j)
+{
+    tuple *helper;
+    int** matrix = allocate_board(size_i, size_j);
+    int aux_functional = 0;
+
+    for (helper = relation_set->next; helper != NULL; helper = helper->next)
+    {
+        matrix[helper->firstValue.index][helper->secondValue.index] = 1;
+    }
+
+    for (int i = 0; i < size_i; i++)
+    {
+        for (int j = 0; j < size_j; j++)
+        {
+            if (matrix[i][j] != 0)
+            {
+                aux_functional++;
+            }
+        }
+        if (aux_functional > 1)
+        {
+            free_board(matrix, size_i);
+            return 0;
+        }
+        aux_functional = 0;
+    }
+    free_board(matrix, size_i);
+    return 1;
+}
+
+void *greater_than(set *setA, set *setB)
 {
     set *helperA;
     set *helperB;
     tuple *greater_than = malloc (sizeof (tuple));
+    int** matrix = allocate_board(len(setA), len(setB));
 
     for (helperA = setA->next; helperA != NULL; helperA = helperA->next)
     {
         for (helperB = setB->next; helperB != NULL; helperB = helperB->next)
         {
-            if (helperA->value > helperB->value)
+            if (helperA->value.value > helperB->value.value)
             {
                 insert_tuple(helperA->value, helperB->value, greater_than);
+                matrix[helperA->value.index][helperB->value.index] = 1;
             }
         }
     }
-    return greater_than;
+    printf("%d", is_functional(greater_than, len(setA), len(setB)));
+    print_tuple(greater_than);
 }
 
 tuple *less_than(set *setA, set *setB)
@@ -210,7 +290,7 @@ tuple *less_than(set *setA, set *setB)
     {
         for (helperB = setB->next; helperB != NULL; helperB = helperB->next)
         {
-            if (helperA->value < helperB->value)
+            if (helperA->value.value < helperB->value.value)
             {
                 insert_tuple(helperA->value, helperB->value, less_than);
             }
@@ -229,7 +309,7 @@ tuple *relations_equals(set *setA, set *setB)
     {
         for (helperB = setB->next; helperB != NULL; helperB = helperB->next)
         {
-            if (helperA->value == helperB->value)
+            if (helperA->value.value == helperB->value.value)
             {
                 insert_tuple(helperA->value, helperB->value, equals_tuple);
             }
@@ -248,7 +328,7 @@ tuple *relations_square(set *setA, set *setB)
     {
         for (helperB = setB->next; helperB != NULL; helperB = helperB->next)
         {
-            if (helperA->value * helperA->value == helperB->value)
+            if (helperA->value.value * helperA->value.value == helperB->value.value)
             {
                 insert_tuple(helperA->value, helperB->value, square_tuple);
             }
@@ -267,7 +347,7 @@ tuple *relations_square_root(set *setA, set *setB)
     {
         for (helperB = setB->next; helperB != NULL; helperB = helperB->next)
         {
-            if (helperA->value == helperB->value * helperB->value)
+            if (helperA->value.value == helperB->value.value * helperB->value.value)
             {
                 insert_tuple(helperA->value, helperB->value, square_root_tuple);
             }
@@ -276,31 +356,15 @@ tuple *relations_square_root(set *setA, set *setB)
     return square_root_tuple;
 }
 
-int is_functional(tuple *relation_set)
-{
-    tuple *helper;
-    int prev_value;
-
-    for (helper = cartesian_tuple->next; helper != NULL; helper = helper->next)
-    {
-        if (helper->firstValue == prev_value)
-        {
-            return 0;
-        }
-        prev_value = helper->firstValue
-    }
-    return 1;
-}
-
 set *make_difference(set *setA, set *setB)
 {
     set *helper;
     set *difference_set = malloc (sizeof (set));
     for (helper = setA->next; helper != NULL; helper = helper->next)
     {
-        if (check_pertinence(helper->value, setB) == 0)
+        if (check_pertinence(helper->value.value, setB) == 0)
         {
-            insert_set(helper->value, difference_set);
+            insert_set(helper->value.value, difference_set);
         }
     }
     return difference_set;
@@ -313,9 +377,9 @@ set *undo_cartesian_product(tuple *cartesian_tuple)
 
     for (helper = cartesian_tuple->next; helper != NULL; helper = helper->next)
     {
-        if (check_pertinence(helper->firstValue, setA) == 0)
+        if (check_pertinence(helper->firstValue.value, setA) == 0)
         {
-            insert_set(helper->firstValue, setA);
+            insert_set(helper->firstValue.value, setA);
         }
     }
     return setA;
@@ -328,7 +392,7 @@ int *set_to_vector(set *setA, int set_size)
     int count = 0;
     for (helper = setA->next; helper != NULL; helper = helper->next)
     {
-        newSet[count] = helper->value;
+        newSet[count] = helper->value.value;
         count++;
     }
     return newSet;
@@ -490,6 +554,10 @@ int main()
                 powerSet *pSet = make_power_set(set_A);
                 set *undo_set = undo_power_set(pSet);
                 print_set(undo_set);
+                break;
+
+            case 13:
+                greater_than(set_A, set_B);
                 break;
 
             default:
