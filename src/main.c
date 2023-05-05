@@ -364,6 +364,26 @@ int is_isomorphism(int **matrix, int size_i, int size_j)
     return 0;
 }
 
+ void multiplice_matrix(int **matrixR, int **matrixS)
+ {
+     int matrix = create_matrix(4, 4);
+     int value = 0;
+
+     for (int i = 0; i < 4; i++)
+     {
+         for (int j = 0; j < 4; j++)
+         {
+             for (int k = 0; k < 4; k++)
+             {
+                 value = (matrixR[i][k] * matrixS[j][k]) + value;
+             }
+             matrix[i][j] = value;
+             value = 0;
+         }
+     }
+     print_matrix(matrix);
+ }
+
 void set_classifications(tuple *relation_set, int size_i, int size_j)
 {
     int** matrix = create_matrix(size_i, size_j);
