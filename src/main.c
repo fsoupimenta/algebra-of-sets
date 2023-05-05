@@ -216,13 +216,24 @@ int **create_matrix(int rows, int columns)
 
 void free_matrix(int **matrix, int rows)
 {
-    int row;
-
-    for (row = 0; row < rows; row++) {
-         free(matrix[row]);
+    for (int row = 0; row < rows; row++) {
+        for (int col = 0; col < rows; col++)
+        {
+            free(matrix[row][col]);
+        }
     }
+ }
 
-    free(matrix);
+ void print_matrix(int **matrix)
+ {
+    printf("\n");
+    for(int x = 0 ; x < 4 ; x++) {
+        printf(" (");
+        for(int y = 0 ; y < 4 ; y++){
+            printf("%d     ", matrix[x][y]);
+        }
+        printf(")\n");
+    }
  }
 
 void fill_matrix(tuple *relation_set, int **matrix)
@@ -235,12 +246,9 @@ void fill_matrix(tuple *relation_set, int **matrix)
     }
 }
 
-int is_functional(tuple *relation_set, int size_i, int size_j)
+int is_functional(int **matrix, int size_i, int size_j)
 {
-    int** matrix = create_matrix(size_i, size_j);
     int aux_functional = 0;
-
-    fill_matrix(relation_set, matrix);
 
     for (int i = 0; i < size_i; i++)
     {
@@ -253,21 +261,16 @@ int is_functional(tuple *relation_set, int size_i, int size_j)
         }
         if (aux_functional > 1)
         {
-            free_matrix(matrix, size_i);
             return 0;
         }
         aux_functional = 0;
     }
-    free_matrix(matrix, size_i);
     return 1;
 }
 
-int is_injective(tuple *relation_set, int size_i, int size_j)
+int is_injective(int **matrix, int size_i, int size_j)
 {
-    int** matrix = create_matrix(size_i, size_j);
     int aux_functional = 0;
-
-    fill_matrix(relation_set, matrix);
 
     for (int i = 0; i < size_i; i++)
     {
@@ -280,21 +283,16 @@ int is_injective(tuple *relation_set, int size_i, int size_j)
         }
         if (aux_functional > 1)
         {
-            free_matrix(matrix, size_i);
             return 0;
         }
         aux_functional = 0;
     }
-    free_matrix(matrix, size_i);
     return 1;
 }
 
-int is_total(tuple *relation_set, int size_i, int size_j)
+int is_total(int **matrix, int size_i, int size_j)
 {
-    int** matrix = create_matrix(size_i, size_j);
     int aux_functional = 0;
-
-    fill_matrix(relation_set, matrix);
 
     for (int i = 0; i < size_i; i++)
     {
@@ -307,21 +305,16 @@ int is_total(tuple *relation_set, int size_i, int size_j)
         }
         if (aux_functional == 0)
         {
-            free_matrix(matrix, size_i);
             return 0;
         }
         aux_functional = 0;
     }
-    free_matrix(matrix, size_i);
     return 1;
 }
 
-int is_surjective(tuple *relation_set, int size_i, int size_j)
+int is_surjective(int **matrix, int size_i, int size_j)
 {
-    int** matrix = create_matrix(size_i, size_j);
     int aux_functional = 0;
-
-    fill_matrix(relation_set, matrix);
 
     for (int i = 0; i < size_i; i++)
     {
@@ -334,39 +327,37 @@ int is_surjective(tuple *relation_set, int size_i, int size_j)
         }
         if (aux_functional == 0)
         {
-            free_matrix(matrix, size_i);
             return 0;
         }
         aux_functional = 0;
     }
-    free_matrix(matrix, size_i);
     return 1;
 }
 
-int is_monomorphism(tuple *relation_set, int size_i, int size_j)
+int is_monomorphism(int **matrix, int size_i, int size_j)
 {
-    if (is_total(relation_set, size_i, size_j) == 1 &&
-        is_injective(relation_set, size_i, size_j))
+    if (is_total(matrix, size_i, size_j) == 1 &&
+        is_injective(matrix, size_i, size_j))
     {
         return 1;
     }
     return 0;
 }
 
-int is_epimorphisms(tuple *relation_set, int size_i, int size_j)
+int is_epimorphisms(int **matrix, int size_i, int size_j)
 {
-    if (is_functional(relation_set, size_i, size_j) == 1 &&
-        is_surjective(relation_set, size_i, size_j))
+    if (is_functional(matrix, size_i, size_j) == 1 &&
+        is_surjective(matrix, size_i, size_j))
     {
         return 1;
     }
     return 0;
 }
 
-int is_isomorphism(tuple *relation_set, int size_i, int size_j)
+int is_isomorphism(int **matrix, int size_i, int size_j)
 {
-    if (is_monomorphism(relation_set, size_i, size_j) == 1 &&
-        is_epimorphisms(relation_set, size_i, size_j))
+    if (is_monomorphism(matrix, size_i, size_j) == 1 &&
+        is_epimorphisms(matrix, size_i, size_j))
     {
         return 1;
     }
@@ -375,34 +366,38 @@ int is_isomorphism(tuple *relation_set, int size_i, int size_j)
 
 void set_classifications(tuple *relation_set, int size_i, int size_j)
 {
-    if (is_functional(relation_set, size_i, size_j) == 1)
+    int** matrix = create_matrix(size_i, size_j);
+    fill_matrix(relation_set, matrix);
+
+    if (is_functional(matrix, size_i, size_j) == 1)
     {
-        printf("Is functional \n");
+        printf("\n Is functional");
     }
-    if (is_injective(relation_set, size_i, size_j) == 1)
+    if (is_injective(matrix, size_i, size_j) == 1)
     {
-        printf("Is injective \n");
+        printf("\n Is injective");
     }
-    if (is_total(relation_set, size_i, size_j) == 1)
+    if (is_total(matrix, size_i, size_j) == 1)
     {
-        printf("Is total \n");
+        printf("\n Is total");
     }
-    if (is_surjective(relation_set, size_i, size_j) == 1)
+    if (is_surjective(matrix, size_i, size_j) == 1)
     {
-        printf("Is surjective \n");
+        printf("\n Is surjective");
     }
-    if (is_monomorphism(relation_set, size_i, size_j) == 1)
+    if (is_monomorphism(matrix, size_i, size_j) == 1)
     {
-        printf("Is monomorphism \n");
+        printf("\n Is monomorphism");
     }
-    if (is_epimorphisms(relation_set, size_i, size_j) == 1)
+    if (is_epimorphisms(matrix, size_i, size_j) == 1)
     {
-        printf("Is epimorphisms \n");
+        printf("\n Is epimorphisms");
     }
-    if (is_isomorphism(relation_set, size_i, size_j) == 1)
+    if (is_isomorphism(matrix, size_i, size_j) == 1)
     {
-        printf("Is isomorphism \n");
+        printf("\n Is isomorphism");
     }
+    free_matrix(matrix, size_i);
 }
 
 tuple *greater_than(set *setA, set *setB)
