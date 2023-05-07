@@ -364,26 +364,6 @@ int is_isomorphism(int **matrix, int size_i, int size_j)
     return 0;
 }
 
- void multiplice_matrix(int **matrixR, int **matrixS)
- {
-     int matrix = create_matrix(4, 4);
-     int value = 0;
-
-     for (int i = 0; i < 4; i++)
-     {
-         for (int j = 0; j < 4; j++)
-         {
-             for (int k = 0; k < 4; k++)
-             {
-                 value = (matrixR[i][k] * matrixS[j][k]) + value;
-             }
-             matrix[i][j] = value;
-             value = 0;
-         }
-     }
-     print_matrix(matrix);
- }
-
 void set_classifications(tuple *relation_set, int size_i, int size_j)
 {
     int** matrix = create_matrix(size_i, size_j);
@@ -515,6 +495,25 @@ tuple *relations_square_root(set *setA, set *setB)
     return square_root_tuple;
 }
 
+tuple *relations_compose(tuple *tupleA, tuple *tupleB)
+{
+    tuple *helperA;
+    tuple *helperB;
+    tuple *relations_compose = malloc (sizeof (tuple));
+
+    for (helperA = tupleA->next; helperA != NULL; helperA = helperA->next)
+    {
+        for (helperB = tupleB->next; helperB != NULL; helperB = helperB->next)
+        {
+            if (helperA->secondValue.value == helperB->firstValue.value)
+            {
+                insert_tuple(helperA->firstValue, helperB->secondValue, relations_compose);
+            }
+        }
+    }
+    return relations_compose;
+}
+
 set *make_difference(set *setA, set *setB)
 {
     set *helper;
@@ -597,13 +596,16 @@ int main()
 
     set *set_A = malloc (sizeof (set));
     set *set_B = malloc (sizeof (set));
+    set *set_C = malloc (sizeof (set));
     int key = -1;
     int main_key = -1;
     int set1[] = {3, 2, 1, 0};
     int set2[] = {6, 5, 4, 3};
+    int set3[] = {10, 9, 8, 3};
 
     insert_set_in_list(set1, 4, set_A);
     insert_set_in_list(set2, 4, set_B);
+    insert_set_in_list(set3, 4, set_C);
 
     tuple *cartesian_product = make_cartesian_product(set_A, set_B);
 
@@ -675,6 +677,14 @@ int main()
                             tuple *relation_setE = relations_square_root(set_A, set_B);
                             print_tuple(relation_setE);
                             set_classifications(relation_setE, len(set_A), len(set_B));
+                            break;
+
+                        case 6:
+                            printf("A->B->C = \n");
+                            tuple *relation_setF = relations_compose(relations_equals(set_A, set_B),
+                                                                     relations_equals(set_B, set_C));
+                            print_tuple(relation_setF);
+                            set_classifications(relation_setF, len(set_A), len(set_C));
                             break;
 
                         default:
